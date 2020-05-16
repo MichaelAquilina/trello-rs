@@ -119,6 +119,13 @@ fn start() -> Result<(), Box<dyn Error>> {
             (@arg case_sensitive: -c --("case-sensitive") "Use case sensitive names when searching")
             (@arg show: -s --show "Show the board associated with the closed object once done")
         )
+        (@subcommand activity =>
+            (about: "View activity for the given board")
+            (@arg board_name: +required "Board Name to retrieve")
+            (@arg list_name: !required "List Name to retrieve")
+            (@arg card_name: !required "Card Name to retrieve")
+            (@arg case_sensitive: -c --("case-sensitive") "Use case sensitive names when searching")
+        )
         (@subcommand create =>
             (about: "Create objects")
             (@arg board_name: !required "Board Name to retrieve")
@@ -177,6 +184,8 @@ fn start() -> Result<(), Box<dyn Error>> {
         subcommands::open_subcommand(&client, &matches)?;
     } else if let Some(matches) = matches.subcommand_matches("create") {
         subcommands::create_subcommand(&client, &matches)?;
+    } else if let Some(matches) = matches.subcommand_matches("activity") {
+        subcommands::activity_subcommand(&client, &matches)?;
     } else {
         println!("{}", matches.usage());
     }

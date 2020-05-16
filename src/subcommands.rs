@@ -6,6 +6,32 @@ use trello::{search, Attachment, Board, Card, Client, Label, List, Renderable};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
+pub fn activity_subcommand(client: &Client, matches: &ArgMatches) -> Result<()> {
+    debug!("Running activity subcommand with {:?}", matches);
+
+    let params = find::get_trello_params(matches);
+    debug!("Trello Params: {:?}", params);
+
+    let result = find::get_trello_object(client, &params)?;
+    debug!("result: {:?}", result);
+
+    let actions = if let Some(card) = result.card {
+        Card::get_actions(client, &card.id)?
+    } else if let Some(list) = result.list {
+        List::get_actions(client, &list.id)?
+    } else if let Some(board) = result.board {
+        Board::get_actions(client, &board.id)?
+    } else {
+        bail!("You must specify a pattern");
+    };
+
+    for action in actions {
+        println!("{}", action.render());
+    }
+
+    Ok(())
+}
+
 pub fn show_subcommand(client: &Client, matches: &ArgMatches) -> Result<()> {
     debug!("Running show subcommand with {:?}", matches);
 
