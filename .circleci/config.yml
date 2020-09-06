@@ -44,11 +44,17 @@ jobs:
             - cargo-{{ checksum "Cargo.lock" }}
             - cargo
       - run:
+          name: Install tarpaulin
+          command: cargo install cargo-tarpaulin
+      - run:
           name: build project
           command: cargo build
       - run:
           name: run tests
-          command: cargo test
+          command: cargo tarpaulin
+      - run:
+          name: Upload to codecov
+          command: bash <(curl -s https://codecov.io/bash)
 
       - save_cache:
           key: cargo-{{ checksum "Cargo.lock" }}
